@@ -24,3 +24,7 @@ infra/otel-demo/upstream/
 
 # Local eval output (keep summaries, not raw runs)
 evals/results/raw/
+.blind_fault.json
+
+# Private learning notes (not part of the public repo)
+LESSONS.md

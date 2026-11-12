@@ -18,4 +18,3 @@ make eval
 - [Plan](docs/plan.md)
 - [Design doc](docs/design.md)
 - [Decisions](docs/decisions/)
-- [Lessons](LESSONS.md)
