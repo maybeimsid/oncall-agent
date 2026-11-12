@@ -2,7 +2,7 @@
 # TODO(sid): pin OTEL_DEMO_VERSION to the latest release tag on day 1
 #   (https://github.com/open-telemetry/opentelemetry-demo/releases)
 
-OTEL_DEMO_VERSION ?= CHANGE_ME
+OTEL_DEMO_VERSION ?= 3.1.0
 DEMO_DIR := infra/otel-demo/upstream
 COMPOSE := docker compose -f $(DEMO_DIR)/docker-compose.minimal.yml
 
