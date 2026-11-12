@@ -4,7 +4,11 @@
 
 OTEL_DEMO_VERSION ?= 3.1.0
 DEMO_DIR := infra/otel-demo/upstream
-COMPOSE := docker compose -f $(DEMO_DIR)/docker-compose.minimal.yml
+# Demo 3.x splits compose into layers. "Minimal" = core + observability stack,
+# no Kafka. Mirrors upstream's own `make start-minimal`.
+COMPOSE := cd $(DEMO_DIR) && docker compose \
+	--env-file .env --env-file .env.override \
+	-f compose.yaml -f compose.observability.yaml -f compose.extras.yaml
 
 .PHONY: help demo-fetch up down status test lint eval
 
