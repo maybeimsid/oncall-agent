@@ -4,6 +4,9 @@
 
 OTEL_DEMO_VERSION ?= 3.1.0
 DEMO_DIR := infra/otel-demo/upstream
+# Upstream .env defaults DEMO_VERSION=latest, which pulls images newer than the
+# pinned compose config. Shell env beats --env-file, so this keeps them in sync.
+export DEMO_VERSION := $(OTEL_DEMO_VERSION)
 # Demo 3.x splits compose into layers. "Minimal" = core + observability stack,
 # no Kafka. Mirrors upstream's own `make start-minimal`.
 COMPOSE := cd $(DEMO_DIR) && docker compose \
