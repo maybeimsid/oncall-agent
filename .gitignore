@@ -28,3 +28,6 @@ evals/results/raw/
 
 # Private learning notes (not part of the public repo)
 LESSONS.md
+
+# Personal Claude Code settings
+.claude/settings.local.json

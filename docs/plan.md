@@ -1,5 +1,7 @@
 # Plan
 
+Current: M1
+
 Budget: $0 beyond Claude Pro. Machine: M4, 16GB. Time: about 12 to 18 hours a week.
 Each milestone is 2 weeks (about 25 to 35 hours). Nothing goes on the resume until
 M2 works end to end.
