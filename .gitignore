@@ -26,8 +26,11 @@ infra/otel-demo/upstream/
 evals/results/raw/
 .blind_fault.json
 
+# Spike raw output
+spikes/tool_calling/results.json
+
 # Private learning notes (not part of the public repo)
-LESSONS.md
+LESSONS*.md
 
 # Personal Claude Code settings
 .claude/settings.local.json
