@@ -36,7 +36,8 @@ status:
 	$(COMPOSE) ps
 
 test:
-	@echo "TODO: cd mcp-telemetry && pnpm test; cd agent && uv run pytest"
+	cd mcp-telemetry && pnpm install --frozen-lockfile && pnpm test
+	@echo "TODO: cd agent && uv run pytest (agent/ is empty until days 6-8)"
 
 lint:
 	@echo "TODO: cd mcp-telemetry && pnpm lint; cd agent && uv run ruff check ."
