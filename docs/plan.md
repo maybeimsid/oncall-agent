@@ -39,10 +39,12 @@ M2 works end to end.
 
 ### Days 3-5: TypeScript MCP telemetry server, tests first (about 8h)
 - [ ] Scaffold `mcp-telemetry/` with the official MCP TypeScript SDK, vitest, strict TS
-- [ ] Tools: `query_metrics`, `search_traces`, `get_service_map`, `list_recent_changes`
+- [ ] Tools, purpose-built instead of raw PromQL (ADR 0006): `get_error_rates`,
+      `search_traces`, `get_service_map`, `list_recent_changes`
 - [ ] Every tool returns a short summary + `result_id`; full result stored for lookup
 - [ ] Unit tests against recorded Prometheus / Jaeger API responses
 - [ ] ADR 0002: why TypeScript for the MCP server
+- [ ] ADR 0006: purpose-built telemetry tools instead of a raw PromQL tool
 
 ### Days 6-8: Python agent (about 8h)
 - [ ] Provider interface: groq | gemini | ollama, chosen by env var

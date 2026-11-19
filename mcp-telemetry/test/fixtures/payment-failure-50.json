@@ -1,0 +1,1041 @@
+{
+  "name": "payment-failure-50",
+  "recordedAt": "2026-11-19T01:43:46.000Z",
+  "evalTime": 1795052626,
+  "prometheusVersion": "3.13.1",
+  "demoVersion": "3.1.0",
+  "window": {
+    "window_minutes": 5,
+    "baseline_offset_minutes": 30
+  },
+  "queries": {
+    "errorsNow": "sum by (service_name, span_kind) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\"}[5m]))",
+    "errorsBaseline": "sum by (service_name, span_kind) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\"}[5m] offset 30m))",
+    "callsNow": "sum by (service_name, span_kind) (rate(traces_span_metrics_calls_total[5m]))",
+    "callsBaseline": "sum by (service_name, span_kind) (rate(traces_span_metrics_calls_total[5m] offset 30m))"
+  },
+  "responses": {
+    "errorsNow": {
+      "status": "success",
+      "data": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {
+              "service_name": "load-generator",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.09583373264055266"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.016666736111400463"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.016666736111400463"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.016666736111400463"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.016666736111400463"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-proxy",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.020833420139250578"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-proxy",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "ad",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "recommendation",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "flagd",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.016666736111400463"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.016666736111400463"
+            ]
+          }
+        ]
+      }
+    },
+    "errorsBaseline": {
+      "status": "success",
+      "data": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {
+              "service_name": "load-generator",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.054166440973162616"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-proxy",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-proxy",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.0035884433814859108"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "ad",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.0035884433814859108"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "recommendation",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.0035884433814859108"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "flagd",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.010765330144457732"
+            ]
+          }
+        ]
+      }
+    },
+    "callsNow": {
+      "status": "success",
+      "data": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.02916678819495081"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.2375009895874566"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.02916678819495081"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "email",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.03750015625065105"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "email",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.012500052083550348"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.02916678819495081"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.02916678819495081"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "shipping",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.17916741319755497"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "shipping",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.16666736111400463"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "ad",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "ad",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.30000125000520833"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "ad",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.29583456597735824"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "cart",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "1.9583414930895544"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "cart",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "1.4333393055804398"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "recommendation",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.9208371701548755"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "recommendation",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.9208371701548755"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "recommendation",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.9208371701548755"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "load-generator",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.9208371701548757"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "load-generator",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.8250034375143229"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "telemetry-docs",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.20000083333680557"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "image-provider",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "4.620852586885778"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-proxy",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "17.558406493360387"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-proxy",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "17.558406493360387"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "currency",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "1.1458381076587818"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "flagd",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "4.820853420222584"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "flagd",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "9.808374201559173"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "quote",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.325001354172309"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "quote",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.1625006770861545"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-web",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "5.595856649402706"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-web",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "7.958366493193721"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "16.375068229450953"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "8.395868316117983"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "4.2625177604906686"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "product-catalog",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "5.516689652873553"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "product-catalog",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "5.516689652873553"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "flagd-ui",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0"
+            ]
+          }
+        ]
+      }
+    },
+    "callsBaseline": {
+      "status": "success",
+      "data": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.04166649305627893"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.41666493056278936"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "checkout",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.04166649305627893"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "email",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.11249953125195311"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "email",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.03749984375065104"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.0035884433814859108"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.03749984375065104"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "payment",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.03749984375065104"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "shipping",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.20833246528139468"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "shipping",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.17083262153074363"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "ad",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.0035884433814859108"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "ad",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.3666651388952546"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "ad",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.349998541672743"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "cart",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "2.191657534760272"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "cart",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "1.5333269444710647"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "recommendation",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.9327512385365061"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "recommendation",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.9291627951550202"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "recommendation",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.9291627951550202"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "load-generator",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.9624959896000435"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "load-generator",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "0.9249961458493924"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "telemetry-docs",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.1999991666701389"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "image-provider",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "4.495814600772497"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-proxy",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "17.649926458639758"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-proxy",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "17.66659305586227"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "currency",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "1.1541618576589265"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "flagd",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "4.970812621614077"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "flagd",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "10.085723351152705"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "quote",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "0.34166524306148727"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "quote",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "0.17083262153074363"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-web",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "5.541643576485098"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend-web",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "8.358298507089554"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "16.545764392648366"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "8.508297882092158"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "frontend",
+              "span_kind": "SPAN_KIND_INTERNAL"
+            },
+            "value": [
+              1795052626,
+              "4.354148524381149"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "product-catalog",
+              "span_kind": "SPAN_KIND_CLIENT"
+            },
+            "value": [
+              1795052626,
+              "5.69580960079333"
+            ]
+          },
+          {
+            "metric": {
+              "service_name": "product-catalog",
+              "span_kind": "SPAN_KIND_SERVER"
+            },
+            "value": [
+              1795052626,
+              "5.69580960079333"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
