@@ -8,6 +8,12 @@ import {
   MIN_RATIO_INCREASE,
   type ErrorRatesDeps,
 } from "./tools/errorRates.js";
+import {
+  LIMITS as TRACE_LIMITS,
+  MODES,
+  searchTraces,
+  SERVICE_PATTERN,
+} from "./tools/searchTraces.js";
 
 export const SERVER_NAME = "mcp-telemetry";
 export const SERVER_VERSION = "0.1.0";
@@ -39,8 +45,39 @@ const DESCRIPTION =
   "confirm with traces before naming a root cause. Returns a short summary that starts with " +
   "a result_id; the full result is stored under that id.";
 
-/** Builds one MCP server instance. Deps are shared across instances (one store per process). */
-export function createServer(deps: ErrorRatesDeps): McpServer {
+export const searchTracesInputSchema = z.object({
+  service: z
+    .string()
+    .regex(SERVICE_PATTERN)
+    .describe('Service name as Jaeger knows it, e.g. "checkout". Unknown names get a list of close matches.'),
+  mode: z
+    .enum(MODES)
+    .describe('"errors": where failures start. "slow": where time goes in the slowest traces.'),
+  lookback_minutes: intIn(TRACE_LIMITS.lookback_minutes, "How far back to search, in minutes."),
+  limit: intIn(TRACE_LIMITS.limit, "How many traces to analyze."),
+  min_duration_ms: intIn(
+    TRACE_LIMITS.min_duration_ms,
+    "Slow mode only: also search for traces where the service has a span at least this long, " +
+      "so rare slow traces are not missed. Ignored in errors mode.",
+  ),
+});
+
+const SEARCH_TRACES_DESCRIPTION =
+  "Looks at recent traces for one service (from Jaeger). " +
+  'mode="errors": takes failing traces that include the service, finds the deepest failing span in each ' +
+  "(an error span with no failing span below it) and counts them by service/operation, with the top error " +
+  "message and example trace ids. " +
+  'mode="slow": takes the slowest traces (the most recent ones plus any with a service span >= min_duration_ms), ' +
+  "looks only inside the service's slowest span, and counts which service/operation had the largest self time " +
+  "(duration minus time in children), with median self time and example trace ids. " +
+  "Use it to confirm what get_error_rates suggests. Results are hints, not proof of root cause. " +
+  "Returns a short summary that starts with a result_id; the full result is stored under that id.";
+
+/** Deps shared across server instances (one store per process). */
+export type ServerDeps = ErrorRatesDeps & { jaegerUrl: string; jaegerTimeoutMs: number };
+
+/** Builds one MCP server instance. */
+export function createServer(deps: ServerDeps): McpServer {
   const server = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION });
   server.registerTool(
     "get_error_rates",
@@ -50,6 +87,27 @@ export function createServer(deps: ErrorRatesDeps): McpServer {
       const result = await getErrorRates(input, deps);
       log(result.isError ? "warn" : "info", "tool call", {
         tool: "get_error_rates",
+        input,
+        isError: Boolean(result.isError),
+        ms: Date.now() - started,
+      });
+      return result;
+    },
+  );
+  server.registerTool(
+    "search_traces",
+    { description: SEARCH_TRACES_DESCRIPTION, inputSchema: searchTracesInputSchema },
+    async (input) => {
+      const started = Date.now();
+      const result = await searchTraces(input, {
+        jaegerUrl: deps.jaegerUrl,
+        fetch: deps.fetch,
+        store: deps.store,
+        timeoutMs: deps.jaegerTimeoutMs,
+        now: deps.now,
+      });
+      log(result.isError ? "warn" : "info", "tool call", {
+        tool: "search_traces",
         input,
         isError: Boolean(result.isError),
         ms: Date.now() - started,

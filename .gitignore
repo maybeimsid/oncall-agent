@@ -34,3 +34,6 @@ LESSONS*.md
 
 # Personal Claude Code settings
 .claude/settings.local.json
+
+# Private interview prep (local only)
+INTERVIEW_PREP*.md

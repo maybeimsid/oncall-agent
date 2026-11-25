@@ -36,7 +36,8 @@ Planned (create only when the current task calls for it):
 - If a hook blocks something, stop and tell me what you were doing. Don't try another way.
 - Plans must cover failure paths (errors, timeouts, retries), not just the happy path.
 - Real tradeoff? Draft an ADR in `docs/decisions/` (copy `0000-template.md`) and ask me.
-- No new dependencies without asking. Prefer boring, explicit code.
+- No new dependencies without asking. Never add exemptions to pnpm's release-age rule.
+  Prefer boring, explicit code.
 
 ## Hard rules
 - Never edit `evals/faults/` (a hook blocks it; don't work around it with Bash).
