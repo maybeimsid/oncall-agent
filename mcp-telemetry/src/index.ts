@@ -20,13 +20,17 @@ const deps = {
   fetch: (input: string | URL, init?: RequestInit) => fetch(input, init),
   store,
   timeoutMs: config.timeoutMs,
+  jaegerUrl: config.jaegerUrl,
+  jaegerTimeoutMs: config.jaegerTimeoutMs,
   now: () => Date.now(),
 };
 
 const handle = serveStdio(() => createServer(deps), {
   onerror: (error) => log("error", "transport error", { error: error.message }),
 });
-log("info", "started", { server: SERVER_NAME, version: SERVER_VERSION, prometheusUrl: config.prometheusUrl });
+log("info", "started", { server: SERVER_NAME, version: SERVER_VERSION, prometheusUrl: config.prometheusUrl,
+  jaegerUrl: config.jaegerUrl,
+});
 
 let closing = false;
 async function shutdown(signal: string): Promise<void> {

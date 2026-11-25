@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "tsc --noEmit && vitest run",
     "start": "node dist/src/index.js",
-    "record-fixtures": "tsc -p tsconfig.build.json && node dist/scripts/record-fixtures.js"
+    "record-fixtures": "tsc -p tsconfig.build.json && node dist/scripts/record-fixtures.js",
+    "record-trace-fixtures": "tsc -p tsconfig.build.json && node dist/scripts/record-trace-fixtures.js"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",
