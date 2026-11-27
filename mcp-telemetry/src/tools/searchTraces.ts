@@ -5,6 +5,7 @@ import type { CallToolResult } from "@modelcontextprotocol/server";
 import { findTraces, getServices, JaegerError, type Span, type TraceQuery } from "../jaeger.js";
 import type { FetchFn } from "../prometheus.js";
 import type { ResultStore } from "../resultStore.js";
+import { closeMatches } from "./closeMatches.js";
 
 // ---------------------------------------------------------------------------
 // Inputs and queries
@@ -316,7 +317,8 @@ export function analyzeErrors(traces: Map<string, Span[]>): ErrorAnalysis {
     };
   });
   groups.sort(byCountThenName);
-  return { tracesAnalyzed: traces.size, tracesWithoutError, orphanSpans, groups };
+  // Ranked groups first: get_result truncates long results from the end.
+  return { groups, tracesAnalyzed: traces.size, tracesWithoutError, orphanSpans };
 }
 
 // ---------------------------------------------------------------------------
@@ -432,14 +434,15 @@ export function analyzeSlow(traces: Map<string, Span[]>, service: string, limit:
   // Total self time counts both how often and how much, so neither many fast
   // traces (count ranking) nor one odd long trace (median ranking) wins on its own.
   groups.sort((a, b) => b.totalSelfMs - a.totalSelfMs || byCountThenName(a, b));
+  // Ranked groups first and per-trace detail last: get_result truncates from the end.
   return {
+    groups,
     candidates: traces.size,
     tracesAnalyzed: chosen.length,
     tracesWithoutService,
     orphanSpans,
     skewedSpans,
     traces: slowTraces,
-    groups,
   };
 }
 
@@ -530,7 +533,6 @@ function slowSummary(id: string, input: SearchTracesInput, a: SlowAnalysis, pool
 // Handler
 
 const RESULT_PREFIX = "tr";
-const MAX_SUGGESTIONS = 5;
 
 export interface SearchTracesDeps {
   jaegerUrl: string;
@@ -557,28 +559,6 @@ function inputProblem(input: SearchTracesInput): string | undefined {
     }
   }
   return undefined;
-}
-
-function editDistance(a: string, b: string): number {
-  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
-  for (let i = 1; i <= a.length; i += 1) {
-    const cur = [i];
-    for (let j = 1; j <= b.length; j += 1) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      cur.push(Math.min((prev[j] as number) + 1, (cur[j - 1] as number) + 1, (prev[j - 1] as number) + cost));
-    }
-    prev = cur;
-  }
-  return prev[b.length] as number;
-}
-
-function closeMatches(service: string, known: string[]): string[] {
-  return known
-    .map((k) => ({ k, d: k.includes(service) || service.includes(k) ? 0 : editDistance(service, k) }))
-    .filter((x) => x.d <= 2)
-    .sort((x, y) => x.d - y.d || x.k.localeCompare(y.k))
-    .slice(0, MAX_SUGGESTIONS)
-    .map((x) => x.k);
 }
 
 function jaegerFailure(err: JaegerError, input: SearchTracesInput): string {
@@ -624,16 +604,23 @@ export async function searchTraces(input: SearchTracesInput, deps: SearchTracesD
     // All searches or nothing: a missing pool would mislead the ranking.
     const results = await Promise.all(queries.map((q) => findTraces(deps.jaegerUrl, q.query, opts)));
     const droppedSpans = results.reduce((n, r) => n + r.droppedSpans, 0);
-    const stored = { tool: "search_traces", input, nowMs, jaegerUrl: deps.jaegerUrl, queries };
+    // Ranked results first, raw queries and input last: get_result truncates from the end.
+    const raw = { queries, input, nowMs, jaegerUrl: deps.jaegerUrl };
 
     if (input.mode === "errors") {
       const analysis = analyzeErrors(groupByTrace(results[0]?.spans ?? []));
-      const id = deps.store.put(RESULT_PREFIX, { ...stored, droppedSpans, analysis });
+      const id = deps.store.put(RESULT_PREFIX, { tool: "search_traces", analysis, droppedSpans, ...raw });
       return { content: [{ type: "text", text: errorsSummary(id, input, analysis, droppedSpans) }] };
     }
     const { traces, counts } = mergePools(results[0]?.spans ?? [], results[1]?.spans ?? []);
     const analysis = analyzeSlow(traces, input.service, input.limit);
-    const id = deps.store.put(RESULT_PREFIX, { ...stored, pools: counts, droppedSpans, analysis });
+    const id = deps.store.put(RESULT_PREFIX, {
+      tool: "search_traces",
+      analysis,
+      pools: counts,
+      droppedSpans,
+      ...raw,
+    });
     return { content: [{ type: "text", text: slowSummary(id, input, analysis, counts, droppedSpans) }] };
   } catch (err) {
     if (err instanceof JaegerError) return errorResult(jaegerFailure(err, input));

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { FetchFn } from "../src/prometheus.js";
 import { ResultStore } from "../src/resultStore.js";
+import { getResult, MAX_RESULT_CHARS } from "../src/tools/getResult.js";
 import { searchTraces, type SearchTracesDeps, type SearchTracesInput } from "../src/tools/searchTraces.js";
 
 interface Recorded {
@@ -95,6 +96,18 @@ describe("errors mode on paymentFailure 50% (recorded, service=checkout)", () =>
     expect(stored.analysis.tracesAnalyzed).toBe(7);
   });
 
+  it("stores ranked groups first and raw queries and input last, so get_result leads with them", async () => {
+    const d = deps(replay(f), f.nowMs);
+    const out = text(await searchTraces(inputOf(f), d));
+    const stored = d.store.get(idOf(out)) as { analysis: object };
+    const keys = Object.keys(stored);
+    expect(keys.slice(0, 2)).toEqual(["tool", "analysis"]);
+    expect(keys.slice(-4)).toEqual(["queries", "input", "nowMs", "jaegerUrl"]);
+    expect(Object.keys(stored.analysis)[0]).toBe("groups");
+    const head = text(getResult({ result_id: idOf(out) }, { store: d.store })).slice(0, MAX_RESULT_CHARS);
+    expect(head).toMatch(/"groups": \[\n\s*\{\n\s*"service": "payment",\n\s*"operation": "charge"/);
+  });
+
   it("errors mode sends one search, ignoring min_duration_ms", async () => {
     const fetch = replay(f);
     await searchTraces({ ...inputOf(f), min_duration_ms: 5000 }, deps(fetch, f.nowMs));
@@ -163,6 +176,20 @@ describe("slow mode on intlShippingSlowdown 5s (recorded, 60m lookback, flag on 
     const out = text(res);
     expect(out).toMatch(/1\. shipping POST \/ship-order: 3 of 20 traces, median self 5005\.2ms, total 15030\.1ms/);
     expect(out).toMatch(/2\. shipping POST: 14 of 20 traces/);
+  });
+
+  it("slow mode stores groups first, per-trace detail after, raw queries and input last", async () => {
+    const d = deps(replay(f), f.nowMs);
+    const out = text(await searchTraces(inputOf(f), d));
+    const stored = d.store.get(idOf(out)) as { analysis: object };
+    const keys = Object.keys(stored);
+    expect(keys.slice(0, 2)).toEqual(["tool", "analysis"]);
+    expect(keys.slice(-4)).toEqual(["queries", "input", "nowMs", "jaegerUrl"]);
+    const analysisKeys = Object.keys(stored.analysis);
+    expect(analysisKeys[0]).toBe("groups");
+    expect(analysisKeys.at(-1)).toBe("traces");
+    const head = text(getResult({ result_id: idOf(out) }, { store: d.store })).slice(0, MAX_RESULT_CHARS);
+    expect(head).toMatch(/"service": "shipping",\n\s*"operation": "POST \/ship-order"/);
   });
 
   it("the slow traces come from the threshold search, and the summary says so", async () => {
