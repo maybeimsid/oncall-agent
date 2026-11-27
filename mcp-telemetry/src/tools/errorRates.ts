@@ -399,17 +399,18 @@ export async function getErrorRates(input: ErrorRatesInput, deps: ErrorRatesDeps
   const windowSeconds = input.window_minutes * 60;
   const { top: ranked } = rankServices(rows, rows.length, windowSeconds);
 
+  // Ranked rows first, raw queries and input last: get_result truncates from the end.
   const id = deps.store.put(RESULT_PREFIX, {
     tool: "get_error_rates",
-    input,
-    evalTime,
-    prometheusUrl: deps.prometheusUrl,
-    queries,
+    services: ranked,
     baselineMissing,
     thresholds: { minRatioIncrease: MIN_RATIO_INCREASE, minErrorsInWindow: MIN_ERRORS_IN_WINDOW },
     droppedNonFinite: Object.fromEntries(keys.map((k) => [k, byKey[k].droppedNonFinite])),
     servicesReportingCalls: [...reporting].sort(),
-    services: ranked,
+    queries,
+    input,
+    evalTime,
+    prometheusUrl: deps.prometheusUrl,
   });
   return { content: [{ type: "text", text: formatSummary(id, input, ranked, baselineMissing, reporting.size) }] };
 }

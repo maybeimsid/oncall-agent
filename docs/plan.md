@@ -20,6 +20,8 @@ M2 works end to end.
    auto-revert?
 4. M4 Depth: logs, runbook search (pgvector hybrid), about 8 faults with a hidden
    test set, blind injection by a friend, local vs hosted model comparison table.
+   Load experiment: run the eval at normal load and at 5-10x load-generator users,
+   compare results.
 5. M5 AWS: create the AWS account (Free plan) only now, CDK deploy, CloudWatch,
    budget alarm, cost and token dashboard per incident, postmortem drafts.
 6. M6 Story: README, design doc, demo video, interview talking points.

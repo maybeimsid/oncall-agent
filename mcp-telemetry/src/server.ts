@@ -8,6 +8,14 @@ import {
   MIN_RATIO_INCREASE,
   type ErrorRatesDeps,
 } from "./tools/errorRates.js";
+import { getResult, MAX_RESULT_CHARS, RESULT_ID_PATTERN } from "./tools/getResult.js";
+import {
+  getLatency,
+  LIMITS as LATENCY_LIMITS,
+  MIN_BASELINE_CALLS,
+  MIN_SLOW_CALLS,
+  MIN_SLOW_SHARE_INCREASE,
+} from "./tools/latency.js";
 import {
   LIMITS as TRACE_LIMITS,
   MODES,
@@ -73,6 +81,53 @@ const SEARCH_TRACES_DESCRIPTION =
   "Use it to confirm what get_error_rates suggests. Results are hints, not proof of root cause. " +
   "Returns a short summary that starts with a result_id; the full result is stored under that id.";
 
+export const latencyInputSchema = z.object({
+  service: z
+    .string()
+    .regex(SERVICE_PATTERN)
+    .optional()
+    .describe('Only this service, e.g. "shipping". Omit for all services. Unknown names get close matches.'),
+  window_minutes: intIn(
+    LATENCY_LIMITS.window_minutes,
+    "Window in minutes. Use 10 when the problem started in the last few minutes, so healthy time " +
+      "does not dilute it. Keep the default 30 for rare or intermittent slowness, which needs more calls to show.",
+  ),
+  baseline_offset_minutes: intIn(
+    LATENCY_LIMITS.baseline_offset_minutes,
+    "How far back the baseline window is, in minutes. Must be >= window_minutes.",
+  ),
+  min_duration_ms: intIn(
+    LATENCY_LIMITS.min_duration_ms,
+    "A call slower than this counts as slow. Snapped down to the nearest histogram bucket edge; the summary says which.",
+  ),
+  limit: intIn(LATENCY_LIMITS.limit, "How many operations to list."),
+});
+
+export const LATENCY_DESCRIPTION =
+  "Per service and operation latency from trace span metrics, now vs a baseline window: calls/sec, " +
+  "slow calls (over min_duration_ms) and their share, and p50/p99 estimates from histogram buckets. " +
+  `A slow share "rose" if it went up by ${MIN_SLOW_SHARE_INCREASE * 100}+ percentage points with ` +
+  `${MIN_SLOW_CALLS}+ slow calls and ${MIN_BASELINE_CALLS}+ baseline calls. SERVER/CONSUMER ops are ranked and ` +
+  "labeled 'likely origin' (no dependency call of the service got slower, or only an uninstrumented one, " +
+  "which is named), 'likely propagated' (a dependency call got slower too, named) or 'no slow increase'. " +
+  "A rare slowdown shows a small slow share with p50 unchanged; a broad one a large share or a higher p50. " +
+  "Window: if the problem started in the last few minutes, pass window_minutes=10 so older healthy time " +
+  "does not dilute it; keep the default 30 for rare or intermittent slowness, which needs more calls. " +
+  "Labels are hints, not verdicts: confirm with search_traces mode=slow. Returns a short summary that " +
+  "starts with a result_id; the full result is stored under that id.";
+
+export const getResultInputSchema = z.object({
+  result_id: z
+    .string()
+    .regex(RESULT_ID_PATTERN)
+    .describe('A result_id from the first line of a tool summary, e.g. "lt_1a2b3c4d".'),
+});
+
+const GET_RESULT_DESCRIPTION =
+  "Returns the full stored result behind a result_id from any tool, as JSON, cut at " +
+  `${MAX_RESULT_CHARS} characters with a note if longer. Results live in memory: old ones are evicted ` +
+  "and a server restart loses them, so rerun the tool if the id is not found.";
+
 /** Deps shared across server instances (one store per process). */
 export type ServerDeps = ErrorRatesDeps & { jaegerUrl: string; jaegerTimeoutMs: number };
 
@@ -108,6 +163,36 @@ export function createServer(deps: ServerDeps): McpServer {
       });
       log(result.isError ? "warn" : "info", "tool call", {
         tool: "search_traces",
+        input,
+        isError: Boolean(result.isError),
+        ms: Date.now() - started,
+      });
+      return result;
+    },
+  );
+  server.registerTool(
+    "get_latency",
+    { description: LATENCY_DESCRIPTION, inputSchema: latencyInputSchema },
+    async (input) => {
+      const started = Date.now();
+      const result = await getLatency(input, deps);
+      log(result.isError ? "warn" : "info", "tool call", {
+        tool: "get_latency",
+        input,
+        isError: Boolean(result.isError),
+        ms: Date.now() - started,
+      });
+      return result;
+    },
+  );
+  server.registerTool(
+    "get_result",
+    { description: GET_RESULT_DESCRIPTION, inputSchema: getResultInputSchema },
+    async (input) => {
+      const started = Date.now();
+      const result = getResult(input, { store: deps.store });
+      log(result.isError ? "warn" : "info", "tool call", {
+        tool: "get_result",
         input,
         isError: Boolean(result.isError),
         ms: Date.now() - started,

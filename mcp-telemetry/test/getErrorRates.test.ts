@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { FetchFn } from "../src/prometheus.js";
 import { ResultStore } from "../src/resultStore.js";
+import { getResult, MAX_RESULT_CHARS } from "../src/tools/getResult.js";
 import { getErrorRates, type ErrorRatesDeps, type ErrorRatesInput } from "../src/tools/errorRates.js";
 
 interface Fixture {
@@ -69,6 +70,17 @@ describe("getErrorRates on the paymentFailure 50% fixture (recorded)", () => {
     const { stored } = await run();
     const rows = (stored as { services: { service: string; label: string }[] }).services;
     expect(rows.filter((r) => r.label === "likely origin").map((r) => r.service)).toEqual(["payment"]);
+  });
+
+  it("stores ranked services first and raw queries and input last, so get_result leads with them", async () => {
+    const d = deps(replay(payment), payment);
+    const out = text(await getErrorRates({ ...DEFAULTS, limit: 20 }, d));
+    const id = /^result_id: (er_[0-9a-f]{8})\n/.exec(out)?.[1] ?? "";
+    const keys = Object.keys(d.store.get(id) as object);
+    expect(keys.slice(0, 2)).toEqual(["tool", "services"]);
+    expect(keys.slice(-4)).toEqual(["queries", "input", "evalTime", "prometheusUrl"]);
+    const head = text(getResult({ result_id: id }, { store: d.store })).slice(0, MAX_RESULT_CHARS);
+    expect(head).toMatch(/"service": "payment",\n[^]*"label": "likely origin"/);
   });
 
   it("labels checkout as likely propagated and ranks payment above it", async () => {
